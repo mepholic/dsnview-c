@@ -3,7 +3,7 @@ project(dsnview)
 
 # start ulver's shit
 set(GENERAL_WARNING_FLAGS          "-Wall -Wextra -pedantic -Wno-unused-parameter -Wno-unused-variable -Wno-variadic-macros -Wno-gnu-zero-variadic-macro-arguments")
-set(GENERAL_DEBUG_FLAGS            "-g")
+set(GENERAL_DEBUG_FLAGS            "-g -gdwarf-2")
 set(GENERAL_RELEASE_FLAGS          "-mtune=native -DNDEBUG -O2 -fomit-frame-pointer")
 set(GENERAL_COMPILER_FLAGS         "-pipe")
 
@@ -23,6 +23,16 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(SOURCE_FILES main.c dsnapi.c dsnapi.h)
 add_executable(dsnview ${SOURCE_FILES})
 
+# Math Library
+find_library(M_LIB m)
+
+# Find cURL
 find_package(CURL)
 include_directories(${CURL_INCLUDE_DIRS})
-target_link_libraries(dsnview ${CURL_LIBRARIES})
+
+# Find libxml2
+find_package(LibXml2)
+include_directories(${LIBXML2_INCLUDE_DIR})
+
+# Link our libraries
+target_link_libraries(dsnview ${M_LIB} ${CURL_LIBRARIES} ${LIBXML2_LIBRARIES})
