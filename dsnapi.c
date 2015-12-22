@@ -62,7 +62,7 @@ size_t curl_writefunction_cb(void *content, size_t size, size_t nmemb, struct st
 }
 
 // Grab a page's contents with cURL, send to callback
-int fetch_content(struct string *contents, const char *url) {
+int fetch_content(struct string *data, const char *url) {
     CURL *curl = curl_easy_init();
 
     if (curl) {
@@ -71,7 +71,7 @@ int fetch_content(struct string *contents, const char *url) {
         curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 3L);
         curl_easy_setopt(curl, CURLOPT_URL, url);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_writefunction_cb);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, contents);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, data);
         res = curl_easy_perform(curl);
 
         if (res != CURLE_OK) {

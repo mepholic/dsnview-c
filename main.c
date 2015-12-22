@@ -5,17 +5,17 @@
 #include "dsnapi.h"
 
 int main(int argc, char *argv[]) {
-    struct string contents;
-    init_string(&contents);
+    struct string data;
+    init_string(&data);
 
     const char *cfg_url = get_config_url();
     char *data_url = get_data_url();
 
-    fetch_content(&contents, data_url);
+    fetch_content(&data, data_url);
     free(data_url);
 
-    printf("%s\n", contents.ptr);
-    free(contents.ptr);
+    printf("%s\n", data.ptr);
+    free(data.ptr);
 
     return 0;
 }
