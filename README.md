@@ -1,9 +1,9 @@
 # DSNView
-I'm currently working on porting my NodeJS dsnview project to C. This is mostly
+I'm currently working on porting my NodeJS [dsnview](https://github.com/mepholic/dsnview) project to C. This is mostly
 a learning exercise for me, but hopefully it'll eventually be usable.
 
 This is a little project I'm working on that includes a library and a frontend
-for accessing and viewing live data from NASA's Deep Space Network.
+for accessing and viewing live data from NASA's [Deep Space Network](https://deepspace.jpl.nasa.gov/).
 
 Feel free to download, use, and contribute to this codebase, but as usual, a
 standard disclaimer: If this breaks your code or computer, I take no
@@ -16,9 +16,9 @@ The following libraries (with headers) are required to build and run dsnview:
  
 To build the project:
 
-   $ cd build
-   $ cmake ..
-   $ make
+    $ cd build
+    $ cmake ..
+    $ make
 
 It should successfully compile and spit out a binary called dsnview in your
 build directory.
