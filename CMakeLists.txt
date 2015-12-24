@@ -20,7 +20,9 @@ set(CMAKE_EXE_LINKER_FLAGS_RELEASE "-s")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-set(SOURCE_FILES main.c dsnapi.c dsnapi.h)
+file(GLOB_RECURSE SOURCE_FILES src/*.c)
+
+include_directories(include/)
 add_executable(dsnview ${SOURCE_FILES})
 
 # Math Library
@@ -28,11 +30,10 @@ find_library(M_LIB m)
 
 # Find cURL
 find_package(CURL)
-include_directories(${CURL_INCLUDE_DIRS})
 
 # Find libxml2
 find_package(LibXml2)
-include_directories(${LIBXML2_INCLUDE_DIR})
 
 # Link our libraries
+target_include_directories(dsnview PUBLIC ${CURL_INCLUDE_DIRS} ${LIBXML2_INCLUDE_DIR})
 target_link_libraries(dsnview ${M_LIB} ${CURL_LIBRARIES} ${LIBXML2_LIBRARIES})

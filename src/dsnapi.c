@@ -2,6 +2,7 @@
 // Created by mepholic on 12/21/15.
 //
 
+#include "util.h"
 #include "dsnapi.h"
 
 // Set constants for NASA URL's
@@ -24,17 +25,13 @@ char *get_data_url() {
     size_t url_len = strlen(g_data_url);
     int time_len = (int) log10(nasa_time) + 1;
 
-    // Allocate space for URL
-    char *data_url = malloc(sizeof(char) * (url_len + time_len));
-    if (data_url == NULL) {
-        fprintf(stderr, "Failed to malloc() in data URL function.\n");
-        // TODO: Handle error condition
-    }
-
     // Format URL and NASA Time, and store in allocated space
-    sprintf(data_url, "%s%lld", g_data_url, (long long) nasa_time);
+    static char data_url[64];
+    char *p_url = data_url;
+    sprintf(p_url, "%s%lld", g_data_url, (long long) nasa_time);
+    data_url[url_len + time_len] = '\0';
 
-    return data_url;
+    return p_url;
 }
 
 // Callback for storing page contents
@@ -86,16 +83,8 @@ int fetch_content(struct string *data, const char *url) {
     }
 }
 
-// Initialize an empty string
-int init_string(struct string *s) {
-    s->len = 0;
-    s->ptr = malloc(s->len + 1);
+// Parse DSN XML content
+int parse_dsn_xml() {
 
-    if (s->ptr == NULL) {
-        fprintf(stderr, "Failed to malloc()\n");
-        return 1;
-    }
-
-    s->ptr[0] = '\0';
-    return 0;
 }
+
