@@ -16,9 +16,9 @@ The following libraries (with headers) are required to build and run dsnview:
  
 To build the project:
 
-   $ cd build
-   $ cmake ..
-   $ make
+    $ cd build
+    $ cmake ..
+    $ make
 
 It should successfully compile and spit out a binary called dsnview in your
 build directory.
