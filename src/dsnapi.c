@@ -5,13 +5,13 @@
 #include "util.h"
 #include "dsnapi.h"
 
-// Set constants for NASA URL's
-const char *g_config_url = "https://eyes.nasa.gov/dsn/config.xml";
-const char *g_data_url   = "https://eyes.nasa.gov/dsn/data/dsn.xml?r=";
+// Define NASA URL's
+#define CONFIG_URL "https://eyes.nasa.gov/dsn/config.xml"
+#define DATA_URL   "https://eyes.nasa.gov/dsn/data/dsn.xml?r="
 
 // Return configuration URL
 const char *get_config_url() {
-    return g_config_url;
+    return CONFIG_URL;
 }
 
 // Construct the URL for data
@@ -22,13 +22,13 @@ char *get_data_url() {
     __time_t nasa_time = t.tv_sec / 5;
 
     // Find length of URL and NASA Time
-    size_t url_len = strlen(g_data_url);
+    size_t url_len = strlen(DATA_URL);
     int time_len = (int) log10(nasa_time) + 1;
 
     // Format URL and NASA Time, and store in allocated space
     static char data_url[64];
     char *p_url = data_url;
-    sprintf(p_url, "%s%lld", g_data_url, (long long) nasa_time);
+    sprintf(p_url, "%s%lld", DATA_URL, (long long) nasa_time);
     data_url[url_len + time_len] = '\0';
 
     return p_url;

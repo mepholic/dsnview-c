@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <malloc.h>
 
-// My structures
+// Structures
 struct string {
     char *ptr;
     size_t len;

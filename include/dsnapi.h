@@ -14,7 +14,7 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
-// My function declarations
+// Function declarations
 const char *get_config_url();
 char *get_data_url();
 int fetch_content(struct string *data, const char *url);

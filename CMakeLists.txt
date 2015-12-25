@@ -3,7 +3,7 @@ project(dsnview)
 
 # start ulver's shit
 set(GENERAL_WARNING_FLAGS          "-Wall -Wextra -pedantic -Wno-unused-parameter -Wno-unused-variable -Wno-variadic-macros -Wno-gnu-zero-variadic-macro-arguments")
-set(GENERAL_DEBUG_FLAGS            "-g -gdwarf-2")
+set(GENERAL_DEBUG_FLAGS            "-g")
 set(GENERAL_RELEASE_FLAGS          "-mtune=native -DNDEBUG -O2 -fomit-frame-pointer")
 set(GENERAL_COMPILER_FLAGS         "-pipe")
 
