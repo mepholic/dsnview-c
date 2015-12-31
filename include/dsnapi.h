@@ -12,11 +12,88 @@
 #include <math.h>
 #include <curl/curl.h>
 #include <libxml/parser.h>
-#include <libxml/tree.h>
+
+// Enumerations
+typedef enum retCode {
+    RET_OK,
+    RET_FAIL
+} RetCode;
+
+typedef enum xmlState {
+    STATE_START,
+    STATE_,
+    STATE_FINISH
+} StatesEnum;
+
+// Structures
+struct dsnSpacecraft {
+    char *name;
+    char *explorerName;
+    char *friendlyName;
+    char *thumbnail;
+};
+
+struct dsnSignal {
+    int  signalDir;
+    char *signalType;
+    char *signalTypeDebug;
+    char *power;
+    char *frequency;
+    char *dataRate;
+    char *spacecraft;
+    char *spacecraftId;
+};
+
+struct dsnTarget {
+    char *name;
+    char *id;
+    char *uplegRange;
+    char *downlegRange;
+    struct dsnSignal *upstreams;
+    struct dsnSignal *downstreams;
+};
+
+struct dsnDish {
+    char *name;
+    char *friendlyName;
+    char *type;
+    char *azimuthAngle;
+    char *elevationAngle;
+    char *windSpeed;
+    char *isMSPA;
+    char *isArray;
+    char *isDDOR;
+    char *created;
+    char *updated;
+    struct dsnTarget *targets;
+};
+
+struct dsnStation {
+    char *name;
+    char *friendlyName;
+    char *longitude;
+    char *latitude;
+    char *timeUTC;
+    char *timeZoneOffset;
+    struct dsnDish *dishes;
+};
+
+struct ParserState {
+    RetCode retVal;
+    StatesEnum state;
+};
+
+// SAX handlers
+/*
+static xmlSAXHandler dsnHandler {
+
+};
+*/
 
 // Function declarations
-const char *get_config_url();
-char *get_data_url();
-int fetch_content(struct string *data, const char *url);
-size_t curl_writefunction_cb(void *content, size_t size, size_t nmemb, struct string *data);
+const char *getConfigURL();
+char *getDataURL();
+int fetchContent(struct string *data, const char *url);
+size_t curlWriteFunctionCB(void *content, size_t size, size_t nmemb, struct string *data);
+int parseDSNConfig(void **stations, struct string *configXML);
 #endif //DSNVIEW_DSNAPI_H
