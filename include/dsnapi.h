@@ -12,20 +12,33 @@
 #include <math.h>
 #include <curl/curl.h>
 #include <libxml/parser.h>
+#include <libxml/tree.h>
 
-// Enumerations
+// Typedefs
+typedef enum handType {
+    HAND_CONFIG,
+    HAND_DATA
+} SAXHandleType;
+
 typedef enum retCode {
     RET_OK,
     RET_FAIL
-} RetCode;
+} RetVal;
 
 typedef enum xmlState {
-    STATE_START,
-    STATE_,
-    STATE_FINISH
+    STATE_DOC_START,
+    STATE_ELEM_START,
+    STATE_ATTR_DECL,
+    STATE_ELEM_END,
+    STATE_DOC_END
 } StatesEnum;
 
 // Structures
+struct ParserState {
+    RetVal retVal;
+    StatesEnum state;
+};
+
 struct dsnSpacecraft {
     char *name;
     char *explorerName;
@@ -78,22 +91,18 @@ struct dsnStation {
     struct dsnDish *dishes;
 };
 
-struct ParserState {
-    RetCode retVal;
-    StatesEnum state;
-};
-
-// SAX handlers
-/*
-static xmlSAXHandler dsnHandler {
-
-};
-*/
-
 // Function declarations
 const char *getConfigURL();
 char *getDataURL();
 int fetchContent(struct string *data, const char *url);
 size_t curlWriteFunctionCB(void *content, size_t size, size_t nmemb, struct string *data);
-int parseDSNConfig(void **stations, struct string *configXML);
+
+xmlSAXHandlerPtr initSAXHandler(SAXHandleType type);
+void cleanupSAXHandler(xmlSAXHandlerPtr ourSAXHandlerPtr);
+
+void configDocStart(void *user_data);
+void configDocEnd(void *user_data);
+void configElemStart(void *user_data, const xmlChar *name, const xmlChar **attrs);
+void configElemEnd(void *user_data, const xmlChar *name);
+int parseDSNConfig(void **stations, xmlSAXHandlerPtr configSAXHandler, struct string *configXML);
 #endif //DSNVIEW_DSNAPI_H

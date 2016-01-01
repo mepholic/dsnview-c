@@ -83,47 +83,68 @@ int fetchContent(struct string *data, const char *url) {
     }
 }
 
+// SAX Handlers
+xmlSAXHandlerPtr initSAXHandler(SAXHandleType type) {
+    xmlSAXHandlerPtr ourSAXHandlerPtr = calloc(1, sizeof(xmlSAXHandler));
+    if (ourSAXHandlerPtr == NULL) {
+        return NULL;
+    }
+
+    if (type == HAND_CONFIG) {
+        ourSAXHandlerPtr->startDocument = configDocStart;
+        ourSAXHandlerPtr->endDocument   = configDocEnd;
+        ourSAXHandlerPtr->startElement  = configElemStart;
+        ourSAXHandlerPtr->endElement    = configElemEnd;
+    } else if (type == HAND_DATA) {
+//    ourSAXHandlerPtr->startDocument = &configDocStart;
+//    ourSAXHandlerPtr.endDocument   = configDocEnd;
+//    ourSAXHandlerPtr.startElement  = configElemStart;
+//    ourSAXHandlerPtr.endElement    = configElemEnd;
+    }
+
+    return ourSAXHandlerPtr;
+}
+
+void cleanupSAXHandler(xmlSAXHandlerPtr ourSAXHandlerPtr) {
+    free(ourSAXHandlerPtr);
+}
+
+// Config Handlers
+void configDocStart(void *user_data) {
+    struct ParserState *s = user_data;
+    s->state = STATE_DOC_START;
+    printf("Starting document\n");
+}
+
+void configDocEnd(void *user_data) {
+    struct ParserState *s = user_data;
+    s->state = STATE_DOC_END;
+    printf("Ending document\n");
+}
+
+void configElemStart(void *user_data, const xmlChar *name, const xmlChar **attrs) {
+    struct ParserState *s = user_data;
+    s->state = STATE_ELEM_START;
+    printf("Starting element: %s\n", name);
+}
+
+void configElemEnd(void *user_data, const xmlChar *name) {
+    struct ParserState *s = user_data;
+    s->state = STATE_ELEM_END;
+    printf("Ending element: %s\n", name);
+}
+
 // Parse DSN XML content
-int parseDSNConfig(void **stations, struct string *configXML) {
+int parseDSNConfig(void **stations, xmlSAXHandlerPtr configSAXHandler, struct string *configXML) {
 
     // Do it better with SAX
+    struct ParserState configDocState;
 
-
-
-
-    // Test XML stuff
-    xmlDocPtr config;
-    xmlNode *root_element = NULL;
-    xmlNode *cur_node = NULL;
-    xmlAttr *cur_prop = NULL;
-
-    config = xmlReadMemory(configXML->ptr, (int) configXML->len, "config.xml", NULL, 0);
-    if (config == NULL) {
-        fprintf(stderr, "Failed to parse document\n");
-        return 1;
+    if (xmlSAXUserParseMemory(configSAXHandler, &configDocState, configXML->ptr, (int) configXML->len) < 0) {
+        return RET_FAIL;
+    } else {
+        return configDocState.retVal;
     }
-
-    root_element = xmlDocGetRootElement(config);
-    if (xmlStrEqual(root_element->name, (const xmlChar *) "config")) {
-        for (cur_node = root_element->children; cur_node; cur_node = cur_node->next) {
-            if (cur_node->type == XML_ELEMENT_NODE) {
-                printf("type: %s\n", cur_node->name);
-                if (xmlStrEqual(cur_node->name, (const xmlChar *) "sites")) {
-                    for (cur_node = cur_node->children; cur_node; cur_node = cur_node->next) {
-                        if (xmlStrEqual(cur_node->name, (const xmlChar *) "site") && cur_node->properties->children) {
-                            printf("\t%s\n", cur_node->name);
-                            for (cur_prop = cur_node->properties; cur_prop; cur_prop = cur_prop->next) {
-                                printf("\t\t%s: %s\n", cur_prop->name, cur_prop->children->content);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    xmlFreeDoc(config);
-
-    xmlCleanupParser();
 
     return 0;
 }
