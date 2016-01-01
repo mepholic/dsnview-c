@@ -96,10 +96,10 @@ xmlSAXHandlerPtr initSAXHandler(SAXHandleType type) {
         ourSAXHandlerPtr->startElement  = configElemStart;
         ourSAXHandlerPtr->endElement    = configElemEnd;
     } else if (type == HAND_DATA) {
-//    ourSAXHandlerPtr->startDocument = &configDocStart;
-//    ourSAXHandlerPtr.endDocument   = configDocEnd;
-//    ourSAXHandlerPtr.startElement  = configElemStart;
-//    ourSAXHandlerPtr.endElement    = configElemEnd;
+//    ourSAXHandlerPtr->startDocument = dataDocStart;
+//    ourSAXHandlerPtr->endDocument   = dataDocEnd;
+//    ourSAXHandlerPtr->startElement  = dataElemStart;
+//    ourSAXHandlerPtr->endElement    = dataElemEnd;
     }
 
     return ourSAXHandlerPtr;
@@ -112,26 +112,114 @@ void cleanupSAXHandler(xmlSAXHandlerPtr ourSAXHandlerPtr) {
 // Config Handlers
 void configDocStart(void *user_data) {
     struct ParserState *s = user_data;
-    s->state = STATE_DOC_START;
-    printf("Starting document\n");
+    s->state = STATE_START;
+    printf("Starting document, State: %d\n", s->state);
 }
 
 void configDocEnd(void *user_data) {
     struct ParserState *s = user_data;
-    s->state = STATE_DOC_END;
-    printf("Ending document\n");
+    s->state = STATE_FINISH;
+    printf("Ending document, State: %d\n", s->state);
 }
 
 void configElemStart(void *user_data, const xmlChar *name, const xmlChar **attrs) {
     struct ParserState *s = user_data;
-    s->state = STATE_ELEM_START;
-    printf("Starting element: %s\n", name);
+
+    switch (s->state) {
+        case STATE_START:
+            if (xmlStrEqual(name, (xmlChar *) "config") && s->state == STATE_START) {
+                s->state = STATE_CONFIG;
+            } else {
+                // TODO: Something went wrong
+            }
+            break;
+        case STATE_CONFIG:
+            if (xmlStrEqual(name, (xmlChar *) "sites")) {
+                s->state = STATE_SITES;
+            } else
+            if (xmlStrEqual(name, (xmlChar *) "spacecraftMap")) {
+                s->state = STATE_SPACECRAFT_MAP;
+            } else {
+                // TODO: Something went wrong
+            }
+            break;
+        case STATE_SITES:
+            if (xmlStrEqual(name, (xmlChar *) "site")) {
+                s->state = STATE_SITE;
+            } else {
+                // TODO: Something went wrong
+            }
+            break;
+        case STATE_SITE:
+            if (xmlStrEqual(name, (xmlChar *) "dish")) {
+                s->state = STATE_DISH;
+            } else {
+                // TODO: Something went wrong
+            }
+            break;
+        case STATE_DISH:
+            break;
+        case STATE_SPACECRAFT_MAP:
+            if (xmlStrEqual(name, (xmlChar *) "spacecraft")) {
+                s->state = STATE_SPACECRAFT;
+            } else {
+                // TODO: Something went wrong
+            }
+        case STATE_SPACECRAFT:
+            break;
+        case STATE_FINISH:
+            break;
+    }
+    printf("Entering element: %s, Entering state: %d\n", name, s->state);
 }
 
 void configElemEnd(void *user_data, const xmlChar *name) {
     struct ParserState *s = user_data;
-    s->state = STATE_ELEM_END;
-    printf("Ending element: %s\n", name);
+    switch (s->state) {
+        case STATE_START:
+            break;
+        case STATE_CONFIG:
+            s->state = STATE_FINISH;
+            break;
+        case STATE_SITES:
+            if (xmlStrEqual(name, (xmlChar *) "sites")) {
+                s->state = STATE_CONFIG;
+            } else {
+                // TODO: Something went wrong
+            }
+            break;
+        case STATE_SITE:
+            if (xmlStrEqual(name, (xmlChar *) "site")) {
+                s->state = STATE_SITES;
+            } else {
+                // TODO: Something went wrong
+            }
+            break;
+        case STATE_DISH:
+            if (xmlStrEqual(name, (xmlChar *) "dish")) {
+                s->state = STATE_SITE;
+            } else {
+                // TODO: Something went wrong
+            }
+            break;
+        case STATE_SPACECRAFT_MAP:
+            if (xmlStrEqual(name, (xmlChar *) "spacecraftMap")) {
+                s->state = STATE_CONFIG;
+            } else {
+                // TODO: Something went wrong
+            }
+        case STATE_SPACECRAFT:
+            if (xmlStrEqual(name, (xmlChar *) "spacecraft")) {
+                s->state = STATE_SPACECRAFT_MAP;
+            } else {
+                // TODO: Something went wrong
+            }
+            break;
+        case STATE_FINISH:
+            break;
+    }
+    printf("Leaving element: %s, Entering state: %d\n", name, s->state);
+
 }
 
 // Parse DSN XML content

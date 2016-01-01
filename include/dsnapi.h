@@ -26,11 +26,14 @@ typedef enum retCode {
 } RetVal;
 
 typedef enum xmlState {
-    STATE_DOC_START,
-    STATE_ELEM_START,
-    STATE_ATTR_DECL,
-    STATE_ELEM_END,
-    STATE_DOC_END
+    STATE_START,
+    STATE_CONFIG,
+    STATE_SITES,
+    STATE_SITE,
+    STATE_DISH,
+    STATE_SPACECRAFT_MAP,
+    STATE_SPACECRAFT,
+    STATE_FINISH
 } StatesEnum;
 
 // Structures
