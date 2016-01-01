@@ -182,38 +182,19 @@ void configElemEnd(void *user_data, const xmlChar *name) {
             s->state = STATE_FINISH;
             break;
         case STATE_SITES:
-            if (xmlStrEqual(name, (xmlChar *) "sites")) {
-                s->state = STATE_CONFIG;
-            } else {
-                // TODO: Something went wrong
-            }
+            s->state = STATE_CONFIG;
             break;
         case STATE_SITE:
-            if (xmlStrEqual(name, (xmlChar *) "site")) {
-                s->state = STATE_SITES;
-            } else {
-                // TODO: Something went wrong
-            }
+            s->state = STATE_SITES;
             break;
         case STATE_DISH:
-            if (xmlStrEqual(name, (xmlChar *) "dish")) {
-                s->state = STATE_SITE;
-            } else {
-                // TODO: Something went wrong
-            }
+            s->state = STATE_SITE;
             break;
         case STATE_SPACECRAFT_MAP:
-            if (xmlStrEqual(name, (xmlChar *) "spacecraftMap")) {
-                s->state = STATE_CONFIG;
-            } else {
-                // TODO: Something went wrong
-            }
+            s->state = STATE_CONFIG;
+            break;
         case STATE_SPACECRAFT:
-            if (xmlStrEqual(name, (xmlChar *) "spacecraft")) {
-                s->state = STATE_SPACECRAFT_MAP;
-            } else {
-                // TODO: Something went wrong
-            }
+            s->state = STATE_SPACECRAFT_MAP;
             break;
         case STATE_FINISH:
             break;
