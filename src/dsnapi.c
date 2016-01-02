@@ -90,6 +90,7 @@ xmlSAXHandlerPtr initSAXHandler(SAXHandleType type) {
         return NULL;
     }
 
+    ourSAXHandlerPtr->initialized = XML_SAX2_MAGIC;
     if (type == HAND_CONFIG) {
         ourSAXHandlerPtr->startDocument = configDocStart;
         ourSAXHandlerPtr->endDocument   = configDocEnd;
@@ -118,7 +119,6 @@ void configDocStart(void *user_data) {
 
 void configDocEnd(void *user_data) {
     struct ParserState *s = user_data;
-    s->state = STATE_FINISH;
     printf("Ending document, State: %d\n", s->state);
 }
 
@@ -127,7 +127,7 @@ void configElemStart(void *user_data, const xmlChar *name, const xmlChar **attrs
 
     switch (s->state) {
         case STATE_START:
-            if (xmlStrEqual(name, (xmlChar *) "config") && s->state == STATE_START) {
+            if (xmlStrEqual(name, (xmlChar *) "config")) {
                 s->state = STATE_CONFIG;
             } else {
                 // TODO: Something went wrong
@@ -171,6 +171,15 @@ void configElemStart(void *user_data, const xmlChar *name, const xmlChar **attrs
             break;
     }
     printf("Entering element: %s, Entering state: %d\n", name, s->state);
+
+    if (attrs) {
+        while (*attrs != NULL) {
+            printf("\t%s: ", *attrs);
+            attrs++;
+            printf("%s\n", *attrs);
+            attrs++;
+        }
+    }
 }
 
 void configElemEnd(void *user_data, const xmlChar *name) {
@@ -200,7 +209,6 @@ void configElemEnd(void *user_data, const xmlChar *name) {
             break;
     }
     printf("Leaving element: %s, Entering state: %d\n", name, s->state);
-
 }
 
 // Parse DSN XML content

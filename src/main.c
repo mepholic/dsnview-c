@@ -38,7 +38,9 @@ int main(int argc, char *argv[]) {
     //printf("%s\n", config_xml.ptr);
 
     // Cleanup
+
     cleanupSAXHandler(configHandler);
+    xmlCleanupParser();
     free(config_xml.ptr);
     free(data_xml.ptr);
 
